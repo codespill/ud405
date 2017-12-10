@@ -13,22 +13,22 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * TODO: Start here
- *
+ * <p>
  * In this exercise, we'll create a word cloud. We've created all the infrastructure like the
  * SpriteBatch and BitmapFont. Now all you need to do is actually draw the random collection of
  * words we've generated.
- *
+ * <p>
  * You can find the Word class at the bottom of this file. It contains 5 fields:
- *
+ * <p>
  * x, y - Normalized position (meaning in the range 0-1), you'll want to multiply by
  * Gdx.graphics.getWidth() and Gdx.graphics.getHeight() as appropriate.
- *
+ * <p>
  * scale - The size of the text.
- *
+ * <p>
  * color - The color of the word.
- *
+ * <p>
  * letters - The actual letters in the world.
- *
+ * <p>
  * Jump to the TODOs below to see what you'll need to do.
  */
 
@@ -44,12 +44,16 @@ public class WordCloud extends ApplicationAdapter {
 
     Array<Word> words;
 
+    private int screenWidth, screenHeight;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
         words = generateWords(WORD_COUNT);
+        screenWidth = Gdx.graphics.getHeight();
+        screenHeight = Gdx.graphics.getHeight();
     }
 
     @Override
@@ -61,6 +65,8 @@ public class WordCloud extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         batch = new SpriteBatch();
+        screenWidth = Gdx.graphics.getHeight();
+        screenHeight = Gdx.graphics.getHeight();
     }
 
     @Override
@@ -72,13 +78,13 @@ public class WordCloud extends ApplicationAdapter {
         for (Word word : words) {
 
             // TODO: Set the font's scale using font.getData().setScale()
-
+            font.getData().setScale(word.scale);
 
             // TODO: Set the font's tint using font.setColor()
-
+            font.setColor(word.color);
 
             // TODO: Actually draw the word using font.draw()
-
+            font.draw(batch, word.letters, screenWidth * word.x, screenHeight * word.y);
         }
         batch.end();
     }
