@@ -2,15 +2,18 @@ package com.udacity.gamedev.smileyface;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * TODO: Start here
- *
+ * <p>
  * The goal of this exercise is just to draw a similey face. Feel free to get as artistic as you
  * want, but we've provided a bunch of constants you may find useful.
- *
+ * <p>
  * The tricky part is drawing the mouth. Since we can't draw thick lines, making a thick line for
  * the mouth is hard. The trick is to draw two arcs. One black one, then a slightly smaller yellow
  * one. The portion of the black arc that isn't covered by the yellow arc becomes the mouth.
@@ -35,14 +38,19 @@ public class SmileyFace extends ApplicationAdapter {
     static final int MOUTH_SEGMENTS = 20;
 
     // TODO: Declare a ShapeRenderer and an ExtendViewport
-
+    private ShapeRenderer shapeRenderer;
+    private Viewport extendViewport;
+    private int screenWidth, screenHeight;
 
 
     @Override
     public void create() {
+        screenWidth = Gdx.graphics.getWidth();
+        screenHeight = Gdx.graphics.getHeight();
 
         // TODO: Initialize the ShapeRenderer and ExtendViewport
-
+        shapeRenderer = new ShapeRenderer();
+        extendViewport = new ExtendViewport(screenWidth / WORLD_WIDTH, screenHeight / WORLD_HEIGHT);
 
     }
 
@@ -50,16 +58,18 @@ public class SmileyFace extends ApplicationAdapter {
     public void dispose() {
 
         // TODO: Dispose of the ShapeRenderer
-
+        shapeRenderer.dispose();
     }
 
     @Override
     public void resize(int width, int height) {
 
         // TODO: Update the viewport
+        extendViewport.update(width, height);
 
 
         // TODO: Move the viewport's camera to the center of the face
+        extendViewport.getCamera().translate(FACE_CENTER_X, FACE_CENTER_Y, 0);
 
     }
 
@@ -73,37 +83,38 @@ public class SmileyFace extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // TODO: Apply the viewport
-
+        extendViewport.apply();
 
         // TODO: Set the ShapeRender's projection matrix
-
+        shapeRenderer.setProjectionMatrix(extendViewport.getCamera().combined);
 
         // TODO: Start a Filled batch
-
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // TODO: Call drawSmileyFace()
-
+        drawSmileyFace(shapeRenderer);
 
         // TODO: End the batch
-
+        shapeRenderer.end();
     }
 
     private void drawSmileyFace(ShapeRenderer renderer) {
 
         // TODO: Set the color to yellow, and draw the face
-
-
+        renderer.setColor(Color.YELLOW);
+        renderer.circle(FACE_CENTER_X, FACE_CENTER_Y, FACE_RADIUS, FACE_SEGMENTS);
 
         // TODO: Set the color to black and draw the eyes
-
-
-
+        renderer.setColor(Color.BLACK);
+        renderer.circle(FACE_CENTER_X - EYE_OFFSET, FACE_CENTER_Y + EYE_OFFSET, EYE_RADIUS, EYE_SEGMENTS);
+        renderer.circle(FACE_CENTER_X + EYE_OFFSET, FACE_CENTER_Y + EYE_OFFSET, EYE_RADIUS, EYE_SEGMENTS);
 
         // TODO: Draw a black arc for the mouth (Hint: MOUTH_OUTER_RADIUS)
-
+        renderer.setColor(Color.BLACK);
+        renderer.arc(FACE_CENTER_X, FACE_CENTER_Y, MOUTH_OUTER_RADIUS, MOUTH_START_ANGLE, MOUTH_DEGREES, MOUTH_SEGMENTS);
 
         // TODO: Draw a yellow arc to make the mouth actually look like a mouth (Hint: MOUTH_INNER_RADIUS)
-
-
+        renderer.setColor(Color.YELLOW);
+        renderer.arc(FACE_CENTER_X, FACE_CENTER_Y, MOUTH_INNER_RADIUS, MOUTH_START_ANGLE, MOUTH_DEGREES, MOUTH_SEGMENTS);
     }
 }
